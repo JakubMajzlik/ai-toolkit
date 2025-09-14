@@ -7,7 +7,7 @@ Tests run using script `.aitoolkit/scripts/run-tests.sh` in project root directo
 
 When you are done with tasks, run script `./aitoolkit/scripts/run-lintProject.sh`. If it pass, the script will return "OK". If it fails, the script will return the errors, fix them all and run the script again. If the script returns "Task is missing, skipping check", take it as it is OK.
 
-Resolve formating issues using ` ./gradlew ktlintFormat`
+Resolve formating issues using script in `./aitoolkit/scripts/run-ktlintFormat.sh`
 
 ## Project Overview
 [PROJECT_OVERVIEW]
@@ -16,3 +16,6 @@ Whole project vision can be found in `.ai-toolkit/vision.md`
 
 ## Techstack
 If information about techstack is need, read it from `.ai-toolkit/techstack.md`
+
+## Coding style guidlines
+- use comments to document why you do, no what you do
