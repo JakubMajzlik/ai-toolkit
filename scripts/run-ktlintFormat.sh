@@ -4,7 +4,17 @@
 
 set -o pipefail
 
-GRADLE_CMD="./gradlew ktlintFormat"
+# pick gradle wrapper if available
+if [ -x ./gradlew ]; then
+    GRADLE=./gradlew
+elif command -v gradle >/dev/null 2>&1; then
+    GRADLE=gradle
+else
+    echo "No gradle or gradlew found in PATH" >&2
+    exit 2
+fi
+
+GRADLE_CMD="$GRADLE ktlintFormat"
 
 # Run the command, capture stdout and stderr separately
 stdout_file=$(mktemp)
