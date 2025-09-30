@@ -26,10 +26,10 @@ OUT="$TMP_DIR/gradle-output.txt"
 
 # Run tests and capture output
 "$GRADLE" test "$@" >"$OUT" 2>&1
-RC=$?
+ERROR_CODE=$?
 
 # All tests passed
-if [ $RC -eq 0 ]; then
+if [ $ERROR_CODE -eq 0 ]; then
     echo "OK"
     rm -rf "$TMP_DIR"
     exit 0
@@ -58,51 +58,23 @@ if ! find . -type f -path '*/build/test-results/test/*.xml' -print -quit | grep 
     fi
     tail -n 200 "$OUT"
     rm -rf "$TMP_DIR"
-    exit $RC
+    exit $ERROR_CODE
 fi
 
 echo "Failed tests and reasons:"
-# Parse XML results with a small perl parser to extract failing testcases
-# Use find ... -print0 piped to while/read to avoid bash-only process substitution/mapfile
+# Parse XML results with Python parser to extract failing testcases
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PARSER="$SCRIPT_DIR/tools/junitxmlparser.py"
+
+if [ ! -f "$PARSER" ]; then
+    echo "Error: XML parser not found at $PARSER" >&2
+    rm -rf "$TMP_DIR"
+    exit 2
+fi
+
 find . -type f -path '*/build/test-results/test/*.xml' -print0 | while IFS= read -r -d '' f; do
-    # write a small perl parser to a temp file to avoid complex inline quoting that can be
-    # misinterpreted when the script is invoked with a different shell
-    PARSER="$TMP_DIR/parse_failures.pl"
-    cat >"$PARSER" <<'PERL'
-#!/usr/bin/env perl
-use strict;
-use warnings;
-local $/ = undef;
-my $file = shift @ARGV;
-my $xml = do { local @ARGV = ($file); local $/ = undef; <> };
-while ($xml =~ /<testcase([^>]*)>(?:.*?)<(failure|error)\b([^>]*)>(.*?)<\/(?:failure|error)>/sg) {
-    my ($attrs, $type, $meta, $content) = ($1, $2, $3, $4);
-    my ($name, $classname, $msg) = ("", "", "");
-    $name = $1 if $attrs =~ /name="([^"]+)"/;
-    $classname = $1 if $attrs =~ /classname="([^"]+)"/;
-    $msg = $1 if $meta =~ /message="([^"]*)"/;
-    $content =~ s/^\s+|\s+$//g;
-    # Decode common XML/HTML entities so messages show raw characters like '<' and '>' instead of '&lt;' and '&gt;'
-    for my $s ($msg, $content) {
-        $s =~ s/&lt;/</g;
-        $s =~ s/&gt;/>/g;
-        $s =~ s/&quot;/"/g;
-        $s =~ s/&apos;/\x27/g;
-        $s =~ s/&#x([0-9A-Fa-f]+);/chr(hex($1))/eg;
-        $s =~ s/&#([0-9]+);/chr($1)/eg;
-        $s =~ s/&amp;/&/g;
-    }
-    print "$classname#$name: $type: $msg\n";
-    my @lines = split /\n/, $content;
-    my $max = @lines < 200 ? @lines : 200;
-    for my $i (0..($max-1)) { print $lines[$i] . "\n" if defined $lines[$i]; }
-    print "\n";
-}
-PERL
-    chmod 0700 "$PARSER"
-    perl "$PARSER" "$f"
+    python3 "$PARSER" "$f"
 done
-rm -f "$TMP_DIR/parse_failures.pl"
 
 rm -rf "$TMP_DIR"
-exit $RC
+exit $ERROR_CODE
