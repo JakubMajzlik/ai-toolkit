@@ -92,17 +92,3 @@ Runs ktlint and detekt code quality checks.
 
 **Exit codes:** 0 = success or task missing, non-zero = lint errors found
 
----
-
-## scripts/tools/junitxmlparser.py
-
-Parses JUnit XML test results and extracts failures.
-
-**Syntax:**
-```bash
-python3 scripts/tools/junitxmlparser.py <test-result.xml>
-```
-
-**Output:** Formatted test failures with class name, method name, and stack traces
-
-**Note:** Used internally by run-tests.sh
