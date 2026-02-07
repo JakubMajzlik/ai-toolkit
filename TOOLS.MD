@@ -1,5 +1,34 @@
 # Development Tools
 
+## scripts/run-junit-tests.sh
+
+Runs Gradle JUnit tests and prints minimal output.
+
+**Syntax:**
+```bash
+./scripts/run-junit-tests.sh [gradle test arguments...]
+```
+
+**Arguments:** All arguments are passed directly to `gradlew test` (or `gradle test` if wrapper is missing)
+
+**Common examples:**
+```bash
+./scripts/run-junit-tests.sh
+./scripts/run-junit-tests.sh --tests "com.example.MyTest"
+./scripts/run-junit-tests.sh -p submodule --tests "*IntegrationTest"
+```
+
+**Output:**
+- Success: `OK <total_tests>`
+- Failure/Error:
+  - Summary: `FAIL failed=<failed_count> passed=<passed_count>`
+  - Assertion failures: `ASSERT <class>#<test>`, then `expected:` and `actual:` lines
+  - Errors: `ERROR <class>#<test>: <message>`, then up to 4 stacktrace frames
+
+**Exit codes:** 0 = success, 1 = test failures/errors, 2 = tooling/runtime issue
+
+---
+
 ## scripts/run-tests.sh
 
 Runs Gradle tests and reports failures.
