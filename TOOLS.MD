@@ -29,34 +29,6 @@ Runs Gradle JUnit tests and prints minimal output.
 
 ---
 
-## scripts/run-tests.sh
-
-Runs Gradle tests and reports failures.
-
-**Syntax:**
-```bash
-./scripts/run-tests.sh [gradle test arguments...]
-```
-
-**Arguments:** All arguments are passed directly to `gradlew test`
-
-**Common examples:**
-```bash
-./scripts/run-tests.sh
-./scripts/run-tests.sh --tests "com.example.MyTest"
-./scripts/run-tests.sh --tests "com.example.MyTest.myTestMethod"
-./scripts/run-tests.sh --tests "*IntegrationTest"
-./scripts/run-tests.sh --tests "com.example.package.*"
-```
-
-**Output:**
-- Success: prints "OK"
-- Failure: prints Kotlin compilation errors and/or test failures with stack traces
-
-**Exit codes:** 0 = success, non-zero = failure
-
----
-
 ## scripts/run-ktlintFormat.sh
 
 Formats Kotlin code using ktlint.
