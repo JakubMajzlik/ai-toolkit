@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Ticket Implementer"
+  short_description: "Implement Jira tickets with approvals"
+  default_prompt: "Use $jira-ticket-implementer to read a Jira ticket, confirm the summary and plan with me, implement it, run bounded review loops, and finish with lint and formatting."
