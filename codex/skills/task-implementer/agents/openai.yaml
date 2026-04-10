@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Implementer"
+  short_description: "Implement tasks with approval checkpoints"
+  default_prompt: "Use $task-implementer to explore the task with subagents, confirm the summary and plan with me, implement the approved work, run validation, and perform bounded review loops before final handoff."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Commit"
+  short_description: "Build and run formatted git commits"
+  default_prompt: "Use $git-commit to construct a commit message in the required format, confirm it with me, and run git commit if I ask."
